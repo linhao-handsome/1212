@@ -1,0 +1,42 @@
+function noteOnLoad(){
+    var id=localStorage.userName;
+    $.ajax({
+        datatype:"JSON",
+        type:"POST",
+        url:"http://210.70.80.21/~s107021008/getNotes.php?",
+        data:"userEmail="+id,
+        crossDomain:true,
+        cache:false,
+        success: function(data){
+            var obj = JSON.parse(data);
+            $("#div3").html('');
+            var div3Content='';
+            for(var i=0;i<obj.length;i++){
+                div3Content+='<p>'+obj[i].type+','+obj[i].title+'</p>';
+            }
+            $("#div3").append(div3Content);
+        },
+        error:function(data){
+            alert("Error:"+data);
+        }
+
+    }
+    )
+}
+
+
+<?php
+include("db_conn.php");
+date_default_timezone_set('Asia/Taipei');
+// $userEmail = $_POST['userEmail'];
+  $userEmail = $_GET['userEmail'];
+   $sql = "SELECT `type`,`title`FROM `note` WHERE `userEmail` ='$userEmail';";
+    $result = mysqli_query($link, $sql);
+    $rows = array();
+    while($record=mysqli_fetch_assoc($result)){
+        $rows[]=$record;
+    }
+   
+echo json_encode( $rows , JSON_UNESCAPED_UNICODE);
+
+
